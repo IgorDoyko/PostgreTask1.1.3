@@ -3,6 +3,7 @@ package overridetech.jdbc.jpa.dao;
 import overridetech.jdbc.jpa.model.User;
 import overridetech.jdbc.jpa.util.Util;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,52 +12,67 @@ import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
 
-    private Statement statement;
+    private Connection connection;
 
     public UserDaoJDBCImpl() {
     }
 
     public void createUsersTable() {
         try {
-            statement = Util.getPostgresqlConnection().createStatement();
-            statement.executeUpdate("DROP TABLE IF EXISTS users");
-            statement.execute("CREATE TABLE users (" +
+            Util util = new Util();
+            connection = util.getPostgresqlConnection();
+            Statement statement = connection.createStatement();
+            statement.execute("CREATE TABLE IF NOT EXISTS users (" +
                     "id BIGSERIAL PRIMARY KEY, " +
                     "name VARCHAR(20) NOT NULL, " +
                     "lastName VARCHAR(20) NOT NULL, " +
                     "age SMALLINT NOT NULL" +
                     ")");
-            System.out.println("Таблица создана");
-        } catch (SQLException e) {
-            System.out.println("Таблица не создана");
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Таблица не создана" + e.getMessage());
         }
     }
 
     public void dropUsersTable() {
         try {
+            Util util = new Util();
+            connection = util.getPostgresqlConnection();
+            Statement statement = connection.createStatement();
             statement.executeUpdate("DROP TABLE IF EXISTS users");
-            System.out.println("Таблица удалена");
+            statement.close();
+            connection.close();
         } catch (SQLException e) {
-            System.out.println("Таблица не удалена");
+            throw new RuntimeException("Таблица не удалена" + e.getMessage());
         }
     }
 
     public void saveUser(String name, String lastName, byte age) {
         try {
+            Util util = new Util();
+            connection = util.getPostgresqlConnection();
+            Statement statement = connection.createStatement();
             statement.executeUpdate("INSERT INTO users (name, lastName, age) " +
                     "VALUES ('" + name + "', '" + lastName + "', '" + age + "')");
             System.out.println("User с именем – " + name + " добавлен в базу данных");
+            statement.close();
+            connection.close();
         } catch (SQLException e) {
-            System.out.println("Пользователь не добавлен");
+            throw new RuntimeException("Пользователь не добавлен" + e.getMessage());
         }
     }
 
     public void removeUserById(long id) {
         try {
+            Util util = new Util();
+            connection = util.getPostgresqlConnection();
+            Statement statement = connection.createStatement();
             statement.executeUpdate("DELETE FROM users WHERE id = '" + id + "'");
-            System.out.println("Юзер удален");
+            statement.close();
+            connection.close();
         } catch (SQLException e) {
-            System.out.println("Юзер не удален");
+            throw new RuntimeException("Юзер не удален" + e.getMessage());
         }
     }
 
@@ -64,6 +80,9 @@ public class UserDaoJDBCImpl implements UserDao {
 
         List<User> list = new ArrayList<>();
         try {
+            Util util = new Util();
+            connection = util.getPostgresqlConnection();
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
 
             while (resultSet.next()) {
@@ -80,19 +99,24 @@ public class UserDaoJDBCImpl implements UserDao {
 
                 list.add(user);
             }
+            statement.close();
+            connection.close();
             return list;
         } catch (SQLException e) {
-            System.out.println("Информация о юзерах не получена");
+            throw new RuntimeException("Информация о юзерах не получена" + e.getMessage());
         }
-        return null;
     }
 
     public void cleanUsersTable() {
         try {
+            Util util = new Util();
+            connection = util.getPostgresqlConnection();
+            Statement statement = connection.createStatement();
             statement.executeUpdate("DELETE FROM users");
-            System.out.println("Строки удалены");
+            statement.close();
+            connection.close();
         } catch (SQLException e) {
-            System.out.println("Строки не удалены");
+            throw new RuntimeException("Строки не удалены" + e.getMessage());
         }
     }
 }

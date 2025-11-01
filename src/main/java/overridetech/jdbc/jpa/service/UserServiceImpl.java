@@ -2,7 +2,9 @@ package overridetech.jdbc.jpa.service;
 
 import overridetech.jdbc.jpa.dao.UserDaoJDBCImpl;
 import overridetech.jdbc.jpa.model.User;
+import overridetech.jdbc.jpa.util.Util;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {

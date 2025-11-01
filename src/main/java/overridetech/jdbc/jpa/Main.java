@@ -9,6 +9,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // реализуйте алгоритм здесь
+
         UserServiceImpl userServiceImpl = new UserServiceImpl();
         userServiceImpl.createUsersTable();
 

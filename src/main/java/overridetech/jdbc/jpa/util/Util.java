@@ -7,28 +7,24 @@ import java.sql.SQLException;
 public class Util {
     // реализуйте настройку соеденения с БД
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/UsersDataBase";
-    private static final String LOGIN = "postgres";
-    private static final String PASSWORD = "Nfqkth317";
-    private static final String exceptionGetConnection = "Соединение с БД не установлено";
-    private static final String exceptionCloseConnection = "Соединение с БД не закрыто";
-    private static Connection connection;
+    private final String URL = "jdbc:postgresql://localhost:5432/UsersDataBase";
+    private final String LOGIN = "postgres";
+    private final String PASSWORD = "Nfqkth317";
+    private Connection connection;
 
-    public static Connection getPostgresqlConnection() {
+    public Connection getPostgresqlConnection() {
         try {
-            connection = DriverManager.getConnection(URL, LOGIN, PASSWORD);
-            return connection;
+            return DriverManager.getConnection(URL, LOGIN, PASSWORD);
         } catch (SQLException e) {
-            System.out.println(exceptionGetConnection);
+            throw new RuntimeException("Соединение с БД не установлено" + e.getMessage());
         }
-        return null;
     }
 
-    public static void closePostgresqlConnection() {
+    public void closePostgresqlConnection() {
         try {
             connection.close();
         } catch (SQLException e) {
-            System.out.println(exceptionCloseConnection);
+            throw new RuntimeException("Соединение с БД не закрыто" + e.getMessage());
         }
     }
 }
